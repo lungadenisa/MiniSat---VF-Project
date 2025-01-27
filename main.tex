@@ -1,6 +1,6 @@
-\documentclass[12pt,a4paper]{report}
+\documentclass[runningheads]{llncs}
 
-\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage[romanian]{babel}
 \usepackage{graphicx}
 \usepackage{amsmath}
@@ -8,97 +8,48 @@
 \usepackage{amssymb}
 \usepackage{hyperref}
 \usepackage{tocbibind} % Include "Bibliography" în cuprins
-\usepackage{titlesec} % Pentru a centra titlurile capitolelor și secțiunilor
+%\usepackage{titlesec} % Pentru a centra titlurile capitolelor și secțiunilor
 \usepackage{enumitem} % Liste personalizate
 \usepackage{cite} 
-\bibliographystyle{plainnat}
-\bibliographystyle{plain}
+%\bibliographystyle{plainnat}
+%\bibliographystyle{plain}
+%\bibliography{thesis.bib}
 
-\usepackage[numbers]{natbib}
-\titleformat{\chapter}[display]
-  {\normalfont\huge\bfseries\centering} % Formatare pentru titlurile capitolelor
-  {\chaptername\ \thechapter}{20pt}{\Huge}
+\title{Prezentare MiniSat}
+% If the title is too long, add a shortened version for running heads:
+%\titlerunning{MiniSat Presentation}
 
-\titleformat{\section}
-  {\normalfont\Large\bfseries} % Formatare pentru titlurile secțiunilor
-  {\thesection}{1em}{}
+\author{Boeriu Lavinia \and 
+Lunga Denisa \and 
+Potopea Mihaela \and 
+Stan Anamaria}
 
-\titleformat{\subsection}
-  {\normalfont\large\bfseries} % Formatare pentru titlurile subsecțiunilor
-  {\thesubsection}{1em}{}
-\begin{document}
+\institute{Universitatea de Vest din Timișoara, Facultatea de Matematică și Informatică}
+\maketitle
+\begin{abstract}
+ 
+Acest raport prezintă o analiză aprofundată a solverului SAT MiniSat, incluzând procesul de instalare, configurare și utilizare pentru rezolvarea problemei satisfiabilității propoziționale. Obiectivul principal este de a explora performanțele MiniSat prin rularea unui benchmark selectat din competiția SAT 2024, oferind o analiză detaliată a rezultatelor experimentale obținute. În cadrul acestui proiect, au fost identificate și examinate algoritmii principali utilizați de MiniSat pentru rezolvarea problemelor SAT, incluzând algoritmul DPLL și CDCL.
+Prin analizarea acestor algoritmi, raportul evidențiază atât structura și funcționalitățile de bază ale MiniSat, cât și posibile îmbunătățiri care ar putea crește eficiența și scalabilitatea solverului în fața instanțelor complexe. 
+Raportul include, de asemenea, o secțiune dedicată provocărilor întâmpinate pe parcursul experimentelor, precum și soluțiile adoptate pentru depășirea acestora, cum ar fi dificultăți în configurarea mediului, complexitatea algoritmică și optimizarea procesului de rulare a benchmark-urilor. 
+\end{abstract}
 
-% Prima pagina de titlu
+\newpage
 
-\begin{titlepage}
-    \begin{center}
-\begin{figure}[h!]
-\vspace{-20pt}
-\begin{center}
-\includegraphics[width=100pt]{FMI-03.png}
-\end{center}
-\end{figure}
+\section{Introducere}
+Soluționarea problemelor de satisfiabilitate reprezintă o provocare fundamentală în domeniul informaticii teoretice, cu aplicații variate în inteligența artificială, verificarea modelului și optimizarea combinatorială. Scopul acestui raport este de a evalua performanța MiniSat, un SAT solver eficient, având implementați algoritmi avansați precum DPLL (Davis-Putnam-Logemann-Loveland) și CDCL (Conflict-Driven Clause Learning), MiniSat este un instrument vital pentru cercetarea satisfiabilității.
 
+În prima parte a acestui raport, vom prezenta problema studiată și de ce este necesară rezolvarea satisfiabilității. Ulterior vor fi discutate și analizate provocările întâmpinate la modul în care a fost instalat MiniSat și despre modul în care am efectuat teste pentru a stabili un standard. Vor fii dezbătute idei principale despre rezultate, subliniind performanța MiniSat în fața diferitelor probleme și limitări.
 
-{\large{\bf UNIVERSITATEA DE VEST DIN TIMI\c SOARA
-
-FACULTATEA DE MATEMATICĂ ȘI INFORMATICĂ
-
-PROGRAM DE STUDII DE MASTERAT: Inginerie Software}}
-
-\vspace{30pt}
-{\large{\bf MEMBRII ECHIPEI: Potopea Mihaela Teodora, Stan Anamaria, Lunga Denisa, Boeriu Lavinia}}
-
-\vspace{120pt}
-{\huge {\bf Prezentare MiniSat  }}
-
-\vspace{160pt}
-\end{center}
-\vfill
-\begin{center}
-{\bf TIMI\c SOARA
-
-2024}
-\end{center}
-
-\end{titlepage}
-
-
-
-
-
-
-
-
-% Abstractul
-\chapter*{Abstract}
-\addcontentsline{toc}{chapter}{Abstract} % Adaugă Rezumatul în cuprins
-Acest raport prezintă o analiză aprofundată a solverului SAT MiniSat, incluzând procesul de instalare, configurare și utilizare pentru rezolvarea problemei satisfiabilității propoziționale (SAT). Obiectivul principal este de a explora performanțele MiniSat prin rularea unui benchmark selectat din competiția SAT 2024, oferind o analiză detaliată a rezultatelor experimentale obținute. În cadrul acestui proiect, au fost identificate și examinate algoritmii principali utilizați de MiniSat pentru rezolvarea problemelor SAT, incluzând algoritmul DPLL (Davis-Putnam-Logemann-Loveland) și CDCL (Conflict-Driven Clause Learning).
-Prin analizarea acestor algoritmi, raportul evidențiază atât structura și funcționalitățile de bază ale MiniSat, cât și posibile îmbunătățiri care ar putea crește eficiența și scalabilitatea solverului în fața instanțelor complexe. Sunt propuse modificări ale acestor algoritmi pentru a optimiza performanțele, alături de sugestii pentru integrarea unor tehnici avansate de enumerare și învățare din conflicte. Structura internă și funcționarea solverului MiniSat sunt documentate cu ajutorul unor diagrame UML și a altor elemente de inginerie software, pentru a oferi o înțelegere clară asupra componentelor esențiale și a relațiilor dintre ele.
-Raportul include, de asemenea, o secțiune dedicată provocărilor întâmpinate pe parcursul experimentelor, precum și soluțiile adoptate pentru depășirea acestora, cum ar fi dificultăți în configurarea mediului, complexitatea algoritmică și optimizarea procesului de rulare a benchmark-urilor. Codul și documentația detaliată a proiectului, incluzând raportul complet și îmbunătățirile propuse, sunt disponibile pe GitHub pentru replicare și evaluare ulterioară. Astfel, proiectul oferă atât o resursă practică pentru utilizarea MiniSat, cât și o bază teoretică solidă pentru explorarea aprofundată a algoritmilor SAT.
-
-
-
-
-\tableofcontents
-
-\chapter{Introducere}
-Soluționarea problemelor de satisfiabilitate reprezintă o provocare fundamentală în domeniul informaticii teoretice, cu aplicații variate în inteligența artificială, verificarea modelului și optimizarea combinatorială. Scopul acestui raport este de a evalua performanța MiniSat, un SAT solver eficient, având implementați algoritmi avansați precum DPLL (Davis-Putnam-Logemann-Loveland) și CDCL (Conflict-Driven Clause Learning), MiniSat este un instrument vital pentru cercetarea satisfiabilității.\cite{b5}
-
-În prima parte a acestui raport, vom prezenta problema studiată și de ce este necesară rezolvarea satisfiabilității. Ulterior vor fi discutate și analizate provocările întâmpinate la modul în care a fost instalat MiniSat și despre modul în care am efectuat teste pentru a stabili un standard. Vor fii dezbătute idei principale despre rezultate, subliniind performanța MiniSat în fața diferitelor probleme și limitări.\cite{b6}
-
-Raportul va examina, de asemenea, algoritmii MiniSat utilizați pentru a rezolva problemele SAT. Vor fi examinate  modul în care funcționează algoritmii DPLL și CDCL, precum și modul în care aceștia pot fi îmbunătățiți pentru a crește eficiența solverului. În plus, vor fi discutate obstacolele care apar în utilizarea și adaptarea acestor algoritmi, oferind o imagine a complexității problemelor SAT și a modurilor în care acestea pot fi rezolvate.\cite{b7}
+Raportul va examina, de asemenea, algoritmii MiniSat utilizați pentru a rezolva problemele SAT. Vor fi examinate  modul în care funcționează algoritmii DPLL și CDCL, precum și modul în care aceștia pot fi îmbunătățiți pentru a crește eficiența solverului. În plus, vor fi discutate obstacolele care apar în utilizarea și adaptarea acestor algoritmi, oferind o imagine a complexității problemelor SAT și a modurilor în care acestea pot fi rezolvate.
 
 În cele din urmă, acest raport subliniază evoluția noastră cu MiniSat și ne ajută să înțelegem mai bine tehnicile avansate utilizate pentru a rezolva problemele de satisfacție. Acest lucru ne ajută să îmbunătățim instrumentele existente și să deschidem noi drumuri de cercetare în acest domeniu dinamic. Proiectul nostru, care include codul sursă și raportul complet, este accesibil pe GitHub. Acest lucru ne permite să obținem acces la resursele și rezultatele obținute.
-\cite{b8}
-\cite{b9}
 
 
 \newpage
 
 
 \section{Descrierea Problemei}
-Provocarea satisfiabilității propoziționale este esențială în domeniul informaticii, având impact în diverse domenii precum inteligența artificială, optimizarea combinatorială și verificarea modelului. Această dificultate constă în a identifica dacă există o asignare a valorilor de adevăr care să îndeplinească o formulă logică exprimată în forma sa conjunctivă. Niciun algoritm cunoscut nu poate rezolva toate instanțele problemei în timp polinomial, ceea ce atrage interesul cercetătorilor pentru soluționarea eficientă a problemelor SAT. Rezolvarea problemei SAT este crucială și pentru crearea de soluționatori, precum MiniSat, care pot gestiona și rezolva cu eficiență instanțele din competițiile actuale și aplicațiile practice.
+Determinarea satisfiabilității propoziționale este esențială în domeniul informaticii, având impact în diverse domenii precum inteligența artificială, optimizarea combinatorială și verificarea modelului. Această dificultate constă în a identifica dacă există o asignare a valorilor de adevăr care să îndeplinească o formulă logică exprimată în forma sa conjunctivă. Niciun algoritm cunoscut nu poate rezolva toate instanțele problemei în timp polinomial, ceea ce atrage interesul cercetătorilor pentru soluționarea eficientă a problemelor SAT. Rezolvarea problemei SAT este crucială și pentru crearea de soluționatori, precum MiniSat, care pot gestiona și rezolva cu eficiență instanțele din competițiile actuale și aplicațiile practice.
 
 Algoritmul DPLL folosește o combinație de decizii și propagări pentru a reduce spațiul de căutare prin determinarea succesivă a valorilor literale. Prin aceste decizii, DPLL reduce dimensiunea problemei și elimină literalele care nu contribuie la soluția finală. Algoritmul este eficient pentru probleme de dimensiuni mai mici, dar când vine vorba de instanțe complexe, cum ar fi cele din competițiile SAT actuale, abordările standard nu sunt suficiente. Din această cauză, CDCL a fost introdus ca o extensie a DPLL pentru a îmbunătăți procesul de căutare și pentru a reduce spațiul de căutare prin învățarea din conflicte.
 
@@ -117,7 +68,7 @@ Pe lângă îmbunătățirile algoritmice, documentația proiectului MiniSat inc
 
 \newpage
 
-\chapter{Pașii Instalării MiniSat}
+\section{Pașii Instalării MiniSat}
 Pentru instalarea MiniSat pe laptopurile personale, am folosit Windows Subsystem for Linux (WSL). 
 
 1.Primul pas in instalarea MiniSat-ului este activarea WSL:
@@ -159,43 +110,87 @@ Pentru instalarea MiniSat pe laptopurile personale, am folosit Windows Subsystem
 4.După instalare, verifică dacă MiniSat funcționează introducând comanda:
 \begin{itemize}
 \begin{itemize}
- \item {minisat}
+\item {minisat}
 \end{itemize}
 \end{itemize}
 
 
 
 \section{Problemele întâmpinate la instalarea MiniSat}
-Până la obținerea rezultatului final, care a constat în instalarea cu succes a MiniSat, am întâmpinat diverse probleme. Acestea au fost soluționate printr-o documentare temeinică realizată pe internet.
- \begin{itemize}
- \item \textbf{P1: Lipsa utilitarelor de dezvoltare necesare pentru compilare } 
- Instalarea MiniSat este destul de dificilă dacă nu sunt utilizate utilitare de dezvoltare precum make sau un compilator C++ adecvat, cum ar fi g++ sau clang. Rularea fișierului Makefile, care automatizează procesul de compilare, necesită utilizarea acestor programe. Lipsa acestora poate provoca erori, cum ar fi make: comanda nu găsită, care indică faptul că sistemul de operare nu este pregătit pentru compilare. Sistemele mai simple sau mașinile virtuale care nu au utilitarele dezvoltatorilor preinstalate întâmpină frecvent această problemă. Soluția implică utilizarea anumitor comenzi pentru sistemul de operare pentru instalarea instrumentelor de dezvoltare, cum ar fi sudo apt install build-essential pentru distribuțiile Debian sau xcode-select --install pentru macOS. Prin urmare, se asigură că toate dependențele care sunt necesare pentru compilarea MiniSat sunt disponibile.
+Am incercat sa rulăm un caz in minisat dupa instalare dar orice linie introduceam nu rula nimic asa ca am introdus un wsl --status, pentru care am primit raspunsul: 
+\paragraph{Default Distribution: Ubuntu
+Default Version: 2
+WSL1 is not supported with your current machine configuration.
+Please enable the "Windows Subsystem for Linux" optional component to use WSL1.}
+După o ce am căutat soluții pe google, am identificat o metodă de activare manuală a WSL, urmând acești pași:
+\begin{enumerate}
+  
 
- \item \textbf{P2: Incompatibilități sau fișiere lipsă în sursa MiniSat} 
-Uneori există incompatibilități între versiunea compilatorului utilizat și codul sursă MiniSat, ceea ce provoacă erori în timpul compilării, care sunt o altă problemă majoră. Aceste erori pot include mesaje precum fatal error: no such file or directory sau probleme legate de standardele actuale ale limbajului C++, cum ar fi utilizarea improprie a funcționalităților introduse în C++11. Utilizatorii pot descărca uneori o sursă MiniSat incompletă sau învechită. Pentru a rezolva aceste probleme, se recomanda să se descarce codul din repository-ul oficial GitHub, care oferă versiunea actualizată. De asemenea, este posibila verificarea compatibilitatii compilatorului folosind comanda g++ -version. În plus, actualizarea compilatorului garantează suportul pentru toate caracteristicile moderne necesare compilării fără erori.
+  \item \textbf{Primul pas:Activare WSL și Virtual Machine Platform}
+  
+Deschidem PowerShell ca administrator și  rulăm următoarele comenzi:
+\begin{itemize}
+   
+ \item dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart  
+ \item dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart  
+ 
+Repornim laptopul pentru a aplica modificările.
+\newline
+
+\end{itemize}	
+  \item \textbf {Al doilea pas: Setare WSL2 ca versiune implicită:}
+\begin{itemize}
 
 
-\item \textbf{P3: Configurarea incorectă a binarelor MiniSat} 
-Atunci când procesul de compilare este finalizat, o problemă frecventă este incapacitatea de a executa MiniSat direct din terminal. Acest lucru se datorează unei configurări inadecvate a variabilei de mediu PATH. În aceste situații, chiar dacă executabilul a fost creat cu succes, comanda minisat poate returna eroarea comanda nu găsită. Această problemă rezultă din faptul că calea de căutare a sistemului de operare nu include directorul unde se află binarul MiniSat. Soluția include mutarea binarului într-un director global accesibil, cum ar fi /usr/local/bin, sau adăugarea directorului de compilare manual în variabila PATH. Este posibil să se configureze permanent această variabilă prin modificarea fișierelor.bashrc sau.zshrc, ceea ce facilitează utilizarea în orice sesiune.
 
+    \item 	Rulăm comanda:
+    
+wsl --set-default-version 2  
+    \item Verificăm setarea cu:
+    
+wsl --status  
+\newline
 \end{itemize}
 
+  \item \textbf{Al treilea pas: Instalare Ubuntu}
 
-\chapter{Rezultate Rulare Benchmark}
+  \begin{itemize}
+\item Pentru a folosi WSL, trebuie să instalăm o Ubuntu folosind comanda:
 
-Pentru a evalua performanța solverului Minisat, am utilizat un set de benchmark-uri în format CNF, provenind din competiția SAT 2024. Scopul rularii benchmarkurilor a fost sa analizeze timpul de execuție, utilizarea memoriei și capacitatea solverului de a determina corect dacă o problema este satisfiabila (SAT) sau nesatisfiabila (UNSAT). Benchmarkurile selectate fac parte din familia Hamiltonian și variază în dimensiune.
+wsl --install -d Ubuntu  
+    \item Setează versiunea:
+
+wsl --set-version Ubuntu 2 
 \newline
+\end{itemize}
+
+  \item \textbf{Ultimul pas: Verificare și depanare}
+  
+Verificăm lista distribuțiilor instalate cu:
+
+wsl --list --verbose  
+
+ \end{enumerate}
+
+\section{Rezultate Rulare}
+
+Pentru a evalua performanța solverului Minisat, am utilizat un set de benchmark-uri în format CNF, provenind din competiția SAT 2024. Scopul rularii benchmarkurilor a fost sa analizeze timpul de execuție, utilizarea memoriei și capacitatea solverului de a determina corect dacă o problema este satisfiabila (SAT) sau nesatisfiabila (UNSAT). Benchmarkurile selectate fac parte din familia Hamiltonian și variază în dimensiune. Formula CNF utilizată provine din familia Hamiltoniana, care analizează existența unui ciclu hamiltonian într-un graf. Aceasta implică un număr semnificativ de variabile și clauze, care depind de structura și dimensiunea grafului.
+
+Familia de probleme Hamiltonian se referă la un set de probleme care implică găsirea unor trasee sau cicluri într-un graf, astfel încât fiecare nod să fie vizitat o singură dată. Cea mai cunoscută problemă din această familie este ciclul hamiltonian, unde trebuie să determinăm dacă există un traseu care trece prin toate nodurile o singură dată și revine la punctul de plecare. O altă problemă importantă este drumul hamiltonian, unde trebuie să găsim un traseu care vizitează fiecare nod o singură dată, dar nu este obligatoriu să se întoarcă la punctul de plecare.  
+
+Problemele hamiltoniene sunt dificil de rezolvat, deoarece fac parte din clasa de probleme NP-complete, ceea ce înseamnă că nu există o metodă eficientă cunoscută care să le rezolve rapid în toate cazurile. Pe măsură ce graful devine mai mare, numărul posibilităților crește foarte mult, ceea ce face ca găsirea unei soluții să fie din ce în ce mai complicată. Totuși, dacă o soluție este oferită, poate fi verificată ușor.  
+
+Aceste probleme au aplicații practice în multe domenii, cum ar fi planificarea rutelor de transport, proiectarea circuitelor electronice și organizarea rețelelor de comunicații. Ele pot fi abordate cu ajutorul unor algoritmi specializați sau prin transformarea lor în alte probleme, cum ar fi satisfiabilitatea booleană (SAT), pentru a fi rezolvate de programe eficiente precum MiniSat.
 \newline
 Pentru a rula benchmark-urile, folosim următorul link pentru a le descărca: 
 \href{https://benchmark-database.de/?track=main_2024}{https://benchmark-database.de/?track=main\_2024}. 
 Aici sunt afișate multiple familii și teste pentru rulare. În funcție de familia pe care dorim să o rulăm, putem să căutăm în bara de căutare denumirea fiecărei familii. În cazul familiei \textit{Hamiltonian}, vom căuta: \texttt{track=main\_2024 and family like hamiltonian}, 
 pentru a ne afișa doar fișierele familiei din competiția SAT 2024. 
 În continuare, se descarcă fiecare fișier în parte, în total 40 de fișiere.
-Solverul \textit{MiniSat} se va rula utilizând următoarea comandă:
-\begin{verbatim}minisat input.cnf output.out > output.stats
-\end{verbatim}
+Solverul \textit{MiniSat} se va rula utilizând următoarea comandă:\\
+minisat input.cnf output.out > output.stats
+\\
 În fișierul de intrare \texttt{input.cnf} găsim descrierea problemei SAT, în timp ce fișierele de ieșire \texttt{output.out} și \texttt{output.stats} includ rezultatul (\texttt{SAT/UNSAT}) și statistici de performanță, cum ar fi timpul de execuție, numărul de restarturi și memoria utilizată.
-\newline
 \newline
 Rezultatele benchmark-urilor au arătat că \textit{MiniSat} rezolvă eficient problemele de dimensiuni mici și medii. Problemele \texttt{UNSAT} au fost, în general, mai dificil de rezolvat, necesitând mai multe restarturi și având un număr mai mare de conflicte. În medie, solverul a utilizat între 15 și 47 MB de memorie și demonstrează eficiență în utilizarea resurselor.
 \newline
@@ -254,52 +249,53 @@ Pe baza acestor rezultate, \textit{MiniSat} s-a dovedit a fi potrivit pentru apl
 \end{tabular}
 
 
-\chapter{Fluxul MiniSat}
-\section{Use Case Diagram}
-Cu ajutorul acestei diagrame se identifică caracteristicile principale ale MiniSat, cum ar fi rezolvarea problemelor SAT, analizarea fișierelor de intrare și soluționarea conflictelor. Aceasta utilizează modele de interacțiune utilizator/sistem și descrie modul în care părțile externe, cum ar fi cadrele universitare, dezvoltatorii sau aplicațiile, se implică în funcțiile esențiale ale MiniSat. Se clarifică limitele sistemului, atrăgând atenția asupra sarcinilor pe care MiniSat le gestionează și asupra celor care sunt gestionate de alte persoane sau sisteme.
+\section{Fluxul MiniSat}
+\subsection{Use Case Diagram}
+Diagrama de cazuri de utilizare ne ajută să identificăm anumite caracteristici ale MiniSat, să analizăm un potențial mod de rezolvare al problemelor SAT și să analizăm modul de procesare al fișierelor de intrare și gestionare a conflictelor. Aceasta descrie interacțiunile dintre utilizatori cum ar fi cadrele universitare, dezvoltatorii sau alte aplicații și sistem, evidențiind funcțiile esențiale ale MiniSat. Diagrama delimitează responsabilitățile sistemului, subliniind sarcinile pe care MiniSat le gestionează în mod direct.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.5\linewidth]{minisat_1.jpg}
-    \caption{Use case diagram}
-    \label{fig:enter-label}
-\end{figure}
 \\
-\section{Class Diagram}
-Obiectivele principale intr-o diagramă de clase sunt structura fundamentală a MiniSat-ului, inclusiv componentele sale principale, cum ar fi Literal, Clause, Database, Propagator și interacțiunile lor, care sunt reprezentate de arhitectura de bază, care evidențiază, de asemenea, datele și operațiunile importante și direcționează implementarea orientată spre obiect.Evidențiază informațiile și activitățile importante: afișează proprietățile și metodele fiecărei clase și ajută dezvoltatorii să înțeleagă structura componentelor MiniSat, acționând ca un plan pentru construirea software-ului.
+\subsection{Class Diagram}
+Obiectivele principale intr-o diagramă de clase sunt structura fundamentală a MiniSat-ului, alaturi de  componentele sale principale, cum ar fi Literal, Clause, Database, Propagator și interacțiunile lor, care sunt reprezentate de arhitectura de bază, care evidențiază, de asemenea, datele și operațiunile importante și direcționează implementarea orientată spre obiect.Evidențiază informațiile și activitățile importante: afișează proprietățile și metodele fiecărei clase și ajută dezvoltatorii să înțeleagă structura componentelor MiniSat, acționând ca un plan pentru construirea software-ului.
 
-\begin{figure}[h]
+\subsection{Sequence Diagram}
+Obiectivele principale ale diagramei de secvențe sunt detalierea fluxului de execuție, prezentarea interacțiunilor dintre componente și, bineînțeles, evidențierea comportamentului dinamic. Ilustrează modul în care MiniSat procesează pas cu pas o cerere de rezolvare SAT, precum și un răspuns, de la analizarea datelor de intrare până la emiterea rezultatelor. Explică modul în care componente precum Solver, Database și Propagator fac schimb de mesaje pentru a îndeplini sarcini specifice. De asemenea, descrie ordinea operațiunilor pentru scenarii cheie, cum ar fi rezolvarea conflictelor sau backtracking.
+
+
+\subsection{Activity Diagram}
+Diagrama de activitate prezintă ca obiective principale modelarea fluxului de soluționare SAT, identificarea punctelor de decizie și evidențierea punctelor de decizie.Descrie fluxul logic al operațiunilor MiniSat, inclusiv propagarea, detectarea conflictelor și backtracking.Clarifică punctele critice de ramificare, cum ar fi dacă este detectat un conflict sau dacă toate variabilele au fost atribuite.Arată sarcini simultane, cum ar fi verificarea mai multor clauze în timpul propagării.
+\newpage
+\begin{figure}
     \centering
-    \includegraphics[width=0.5\linewidth]{minisat_2.jpg}
-    \caption{Class diagram}
-    \label{fig:enter-label}
+    \includegraphics[width=0.5\textwidth]{minisat_1.jpg}
+    \caption{Use case diagram.}
+    \label{fig:use-case-diagram}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.5\textwidth]{minisat_2.jpg}
+    \caption{Class diagram.}
+    \label{fig:use-case-diagram}
 \end{figure}
 
-\section{Sequence Diagram}
-Obiectivele principale ale diagramei de secvențe sunt detalierea fluxului de execuție, prezentarea interacțiunilor dintre componente și, bineînțeles, evidențierea comportamentului dinamic.Ilustrează modul în care MiniSat procesează pas cu pas o cerere de rezolvare SAT, de la analizarea datelor de intrare până la emiterea rezultatelor.Explică modul în care componente precum Solver, Database și Propagator fac schimb de mesaje pentru a îndeplini sarcini specifice.De asemenea, descrie ordinea operațiunilor pentru scenarii cheie, cum ar fi rezolvarea conflictelor sau backtracking.
-
-\begin{figure}[h]
+\begin{figure}
     \centering
-    \includegraphics[width=0.5\linewidth]{minisat_3.jpg}
-    \caption{Sequence diagram}
-    \label{fig:enter-label}
+    \includegraphics[width=0.5\textwidth]{minisat_3.jpg}
+    \caption{Sequence diagram.}
+    \label{fig:use-case-diagram}
 \end{figure}
 
-\section{Activity Diagram}
-Diagrama de activitate prezintă ca biective principale modelarea fluxului de soluționare SAT, identificarea punctelor de decizie și evidențierea punctelor de decizie.Descrie fluxul logic al operațiunilor MiniSat, inclusiv propagarea, detectarea conflictelor și backtracking.Clarifică punctele critice de ramificare, cum ar fi dacă este detectat un conflict sau dacă toate variabilele au fost atribuite.Arată sarcini simultane, cum ar fi verificarea mai multor clauze în timpul propagării.
-\begin{figure}[h]
+\begin{figure} 
     \centering
-    \includegraphics[width=0.5\linewidth]{minisat_4.jpg}
-    \caption{Activity diagram}
-    \label{fig:enter-label}
+    \includegraphics[width=0.5\textwidth]{minisat_4.jpg}
+    \caption{Activity diagram.}
+    \label{fig:use-case-diagram}
 \end{figure}
+\newpage
 
- \cite{b5}
 
+\section{Documentarea codului}
 
-\chapter{Documentarea codului}
-
-\section*{CDCL (Conflict-Driven Clause Learning)}
+\subsection{CDCL (Conflict-Driven Clause Learning)}
 CDCL este algoritmul central folosit în \textit{MiniSat} pentru rezolvarea problemei SAT. Este o extensie a DPLL, îmbunătățită prin mecanisme precum învățarea de clauze și decizii euristice.
 
 \subsection*{Părți esențiale implementate în \textit{MiniSat}}
@@ -316,7 +312,7 @@ CDCL este algoritmul central folosit în \textit{MiniSat} pentru rezolvarea prob
     \item \textbf{SolverTypes.h:} Definește structuri de date precum \texttt{Clause}, \texttt{Literal} etc.
 \end{itemize}
 
-\section*{DPLL (Davis-Putnam-Logemann-Loveland)}
+\subsection{DPLL (Davis-Putnam-Logemann-Loveland)}
 DPLL este algoritmul pe care CDCL îl extinde. Este mai simplu, fără optimizări precum învățarea de clauze și decizii bazate pe grafuri de conflict.
 
 \subsection*{Părți esențiale implementate în \textit{MiniSat}}
@@ -326,7 +322,7 @@ DPLL este algoritmul pe care CDCL îl extinde. Este mai simplu, fără optimiză
     \item \textbf{Algoritmul principal DPLL:} Implementat în funcțiile de căutare recursivă din \texttt{Solver.cc}.
 \end{itemize}
 
-\section*{Analiză detaliată a metodelor}
+\subsection{Analiză detaliată a metodelor}
 \subsection*{Funcții cheie}
 
 \begin{enumerate}[label=\arabic*.]
@@ -336,7 +332,7 @@ DPLL este algoritmul pe care CDCL îl extinde. Este mai simplu, fără optimiză
 
     \item \textbf{Analiza conflictelor (\texttt{analyze})}  
     \textit{Locație: Solver.cc}  
-    În cazul unui conflict, determină cauza utilizând graful de implicații. Creează o clauză nouă (\textit{cut clause}) folosind \textit{First UIP}.
+    În cazul unui conflict, determină cauza utilizând graful de implicații.
 
     \item \textbf{Backtracking (\texttt{backtrack}) și Backjumping}  
     \textit{Locație: Solver.cc}  
@@ -358,28 +354,54 @@ DPLL este algoritmul pe care CDCL îl extinde. Este mai simplu, fără optimiză
     \textit{Locație: Solver.cc}  
     Integrează propagarea, analiza conflictelor, backjumping-ul și verificarea satisfiabilității.
 \end{enumerate}
+\newpage
+\section{Corelarea dintre materialul de curs și raport în analiza algoritmilor CDCL și DPLL}
+
+\begin{itemize}
+   
+
+ \item DPLL
+
+DPLL este prezentat în curs ca un algoritm fundamental pentru rezolvarea problemelor SAT, fiind descris prin structura sa bazată pe enumerare, propagare a constrângerilor și backtracking. Sunt incluse definiții formale, exemple și analiza modului în care algoritmul navighează spațiul soluțiilor.
+În acest raport, abordăm implementarea DPLL în MiniSat, discutând aspectele practice și optimizările aplicate pentru a îmbunătăți eficiența. Punem accent pe tehnicile de selecție a variabilelor și pe impactul acestora asupra performanței solverului. De asemenea, testăm eficiența DPLL prin benchmark-uri și îl comparăm cu CDCL, evidențiind avantajele și limitările fiecărui algoritm.
+Astfel, cursul explică fundamentele DPLL și rolul său în dezvoltarea metodelor moderne, iar raportul explorează implementarea concretă și performanța acestuia în MiniSat.
+ \item CDCL
+ 
+Cursul prezintă CDCL ca o extensie a DPLL, punând accent pe propagarea constrângerilor (BCP), euristici și backtracking. De asemenea, explică modul în care învățarea din conflicte îmbunătățește eficiența rezolvării problemelor SAT, oferind exemple și pseudocod.
+În acest raport, ne concentrăm pe aplicarea CDCL în MiniSat, analizând implementarea practică și optimizările care îi sporesc performanța. Detaliem utilizarea euristicilor avansate, precum VSIDS, și mecanismele prin care MiniSat gestionează conflictele pentru a accelera procesul de satisfiabilitate. De asemenea, evaluăm eficiența CDCL prin benchmark-uri și comparăm rezultatele cu alte metode utilizate în domeniu.
+\end{itemize}
+Astfel, cursul explică fundamentele DPLL și CDCL, evidențiind rolul lor în dezvoltarea metodelor moderne de rezolvare a problemelor SAT, în timp ce în raport explorăm implementarea concretă în MiniSat, analizând performanța fiecărui algoritm și impactul optimizărilor asupra eficienței solverelor.
 
 
+\section{Colaborarea dintre DPLL și CDCL în implementarea MiniSat}
+În acest raport, am analizat cum funcționează DPLL și CDCL în solverul MiniSat și cum colaborează acestea pentru a rezolva problemele SAT mai eficient. DPLL este algoritmul de bază, folosit pentru a explora spațiul de căutare, dar, dacă ar rula singur, ar deveni ineficient pe probleme mai mari. De aceea, CDCL vine ca o optimizare, ajutând MiniSat să învețe din conflicte și să evite explorarea inutilă a soluțiilor greșite.
 
-\chapter{Raport de activitate în cadrul proiectului pentru fiecare membru al echipei}
-Proiectul realizat se poate accesa prin link-ul: \href{https://github.com/lungadenisa/MiniSat---VF-Project}{https://github.com/lungadenisa/MiniSat---VF-Project}.De asemenea, documentarea codului se poate accesa prin link-ul:
+În raport, se poate observa că DPLL funcționează prin alegerea unei variabile, atribuirea unei valori și propagarea constrângerilor prin BCP (Boolean Constraint Propagation). Asta înseamnă că, odată setată o variabilă, BCP deduce automat alte valori posibile, reducând dimensiunea problemei.
+
+Problema apare atunci când solverul ajunge la un conflict – adică o situație în care toate opțiunile posibile duc la o contradicție. Fără CDCL, DPLL ar trebui să facă backtracking simplu, revenind un pas înapoi și încercând altă variantă, ceea ce poate fi foarte lent. În MiniSat, CDCL îmbunătățește acest proces prin învățare din conflicte: când solverul detectează un conflict, creează o clauză nouă care previne repetarea acelei greșeli și aplică backjumping, adică sare direct la punctul relevant, în loc să reia căutarea de la ultimul pas.
+
+Raportul evidențiază că MiniSat utilizează euristici avansate în CDCL, precum VSIDS, pentru a prioritiza variabile relevante și a accelera rezolvarea. Testele arată că CDCL îmbunătățește semnificativ eficiența MiniSat, permițându-i să învețe din greșeli și să reducă spațiul de căutare. Fără CDCL, DPLL ar întâmpina dificultăți în probleme complexe, iar combinația celor doi algoritmi este esențială pentru performanța solverului.
+
+
+\section{Raport de activitate în cadrul proiectului pentru fiecare membru al echipei}
+Proiectul realizat si videoclipul în care sunt prezentate aspectele tehnice se pot accesa prin link-ul: \href{https://github.com/lungadenisa/MiniSat---VF-Project}{https://github.com/lungadenisa/MiniSat---VF-Project}.De asemenea, documentarea codului se poate accesa prin link-ul:
 \url{https://docs.google.com/document/d/17dpwrUJ_5nGMMfIYFlbtwOZ6_ki_n_oHQJSLbJMvhV8/edit?tab=t.0#heading=h.rgn6slwpli8g}
-\section{Potopea Mihaela Teodora}
+\section* {Potopea Mihaela Teodora}
 \paragraph{EMAIL:} mihaela.potopea03@e-uvt.ro
 
-\paragraph{ATRIBUȚII:} Probleme întâmpinate la rulare și alte probleme, Latex Report
+\paragraph{ATRIBUȚII:} Probleme întâmpinate la rulare și alte probleme, Corelarea dintre curs și raport, Modul de co-lucrare dintre DPLL si CDCL, Video, Latex Report
 
-\section{Stan Anamaria}
+\section* {Stan Anamaria}
 \paragraph{EMAIL:} anamaria.stan02@e-uvt.ro
 
 \paragraph{ATRIBUȚII:} Introducere, Descrierea problemei, Diagrame UML, Latex Report
 
-\section{Lunga Denisa}
+\section* {Lunga Denisa}
 \paragraph{EMAIL:} denisa.lunga00@e-uvt.ro
 
 \paragraph{ATRIBUȚII:} Instalare Minisat, Rulare benchmark, Încărcare cod pe GitHub
 
-\section{Boeriu Lavinia}
+\section* {Boeriu Lavinia}
 
 \paragraph{EMAIL:} lavinia.boeriu02@e-uvt.ro
 
@@ -387,17 +409,22 @@ Proiectul realizat se poate accesa prin link-ul: \href{https://github.com/lungad
 
 \newpage
  
+\begin{thebibliography}{8}
 
+\bibitem{ref_article1}
+Al-Yahya, T., et al.: Boosting the Performance of CDCL-Based SAT Solvers by Exploiting Backbones and Backdoors. Algorithms \textbf{15}(9), 302 (2022). https://doi.org/10.3390/a15090302
 
+\bibitem{ref_article2}
+Biere, A.: MiniSat and Beyond: Improving SAT Solvers for Industrial Use. Journal of Algorithms and Computation 
 
+\bibitem{ref_misc1}
+MiniSat Page. \url{http://minisat.se/}
 
+\bibitem{ref_misc2}
+Install WSL. \url{https://learn.microsoft.com/en-us/windows/wsl/install}
 
-
-
-
-
-
-
-\bibliography{thesis}
+\bibitem{ref_misc3}
+SAT Competition. \url{http://www.satcompetition.org}
+\end{thebibliography}
 
 \end{document}
